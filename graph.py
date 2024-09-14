@@ -1,9 +1,11 @@
 import random
 import itertools
+from collections import deque
 
 class Graph:
     def __init__(self, nodes: int):
         self._v = [set() for _ in range(nodes)]
+        self._vset = [node for node in range(nodes)]
         self.numVertices = nodes
         self.numEdges = 0
     
@@ -88,15 +90,40 @@ class Graph:
             self.addDiEdge(u,v) 
             
             eset.remove(new_edge)
+    
+    def BFS(self, node: int) -> list[int]:
+        if node not in self._vset: 
+            raise ValueError(f"Node {node} is not in graph")
+
+        visited = set()
+        nodeQueue = deque()
+        # start with root node
+        visited.add(node)
+        nodeQueue.append(node)
+        
+        bfs = list()
+        while len(nodeQueue) != 0:
+            node = nodeQueue.popleft()
+            bfs.append(node)
+
+            # build in a new level set
+            for adj in self._v[node]:
+                if adj in visited: continue
+
+                visited.add(adj)
+                nodeQueue.append(adj)
+
+        return bfs
+    
+    def DFS(self, node: int) -> list[int]:
+        if node not in self._vset:
+            raise ValueError(f"Node {node} is not in graph")
 
 
 if __name__=="__main__":
     di = Graph(6)
     di.randomDirectedGraph()
-
-    un = Graph(4)
-    un.randomUndirectedGraph()
+    
     print(di)
-    print(un)
-
+    print(di.BFS(0))
 
